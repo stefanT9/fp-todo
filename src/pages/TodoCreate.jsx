@@ -1,9 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { v4 } from "uuid";
 import { useNavigate } from "react-router-dom";
+import TodosStore from "../store/todosStore";
 
-function TodoCreate(props) {
-  const { todos, setTodos } = props;
+function TodoCreate() {
+  const { postTodo } = useContext(TodosStore);
+
   const navigate = useNavigate();
 
   const [title, setTitle] = useState("");
@@ -17,17 +19,14 @@ function TodoCreate(props) {
     setDescription(event.target.value);
   };
 
-  const handleCreateTodo = () => {
-    setTodos((prev) => {
-      const id = v4();
-      return [
-        ...prev,
-        {
-          title,
-          description,
-          id,
-        },
-      ];
+  const handleCreateTodo = async (evt) => {
+    evt.preventDefault()
+    const id = v4();
+
+    await postTodo({
+      title,
+      description,
+      id
     });
 
     navigate("/todos");
